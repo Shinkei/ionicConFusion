@@ -1,0 +1,9 @@
+#Sublime text project
+*.sublime-project
+*.sublime-workspace
+
+#Node dependencies
+node_modules
+bower_components
+dist
+.tmp
