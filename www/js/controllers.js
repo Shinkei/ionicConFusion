@@ -41,7 +41,8 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
   };
 });
 
-app.controller('MenuController',['$scope', 'menuFactory', function($scope, menuFactory) {
+app.controller('MenuController',['$scope', 'menuFactory', 'baseURL', function($scope, menuFactory, baseURL) {
+    $scope.baseURL = baseURL;
     $scope.tab = 1;
     $scope.filtText = ''; // Filter
     $scope.showDetails = false;
@@ -119,8 +120,8 @@ app.controller('FeedbackController', ['$scope', 'feedbackFactory', function($sco
 }]);
 
 // Dishes Details
-app.controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', function($scope, $stateParams, menuFactory) {
-
+app.controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL', function($scope, $stateParams, menuFactory, baseURL) {
+    $scope.baseURL = baseURL;
     $scope.showDish = false;
     $scope.message = "Loading...";
     $scope.dish = {};
@@ -216,7 +217,8 @@ app.controller('IndexController', ['$scope', 'menuFactory', 'corporateService', 
 
 }]);
 
-app.controller('AboutController', ['$scope', 'corporateService',function($scope, corporateService){
+app.controller('AboutController', ['$scope', 'corporateService', 'baseURL', function($scope, corporateService, baseURL){
+    $scope.baseURL = baseURL;
     $scope.showLeaders = false;
     $scope.messageLeaders = 'Loading...';
     $scope.leaders = {};
