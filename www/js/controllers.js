@@ -11,7 +11,7 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 
   // Form data for the login modal
   $scope.loginData = {};
-
+    $scope.reservation = {};
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
     scope: $scope
@@ -39,6 +39,29 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
       $scope.closeLogin();
     }, 1000);
   };
+
+// Modal for the reservation form
+    $ionicModal.fromTemplateUrl('templates/reserve.html', {
+        scope:$scope
+    }).then(function(modal){
+        $scope.reserveform = modal;
+    });
+
+    $scope.closeReserve = function(){
+        $scope.reserveform.hide();
+    };
+
+    $scope.reserve = function(){
+        $scope.reserveform.show();
+    };
+
+    $scope.doReserve = function(){
+        console.log('Doing reservation', $scope.reservation);
+        $scope.reservation = {};
+        $timeout(function(){
+            $scope.closeReserve();
+        }, 1000);
+    };
 });
 
 app.controller('MenuController',['$scope', 'menuFactory', 'baseURL', function($scope, menuFactory, baseURL) {
