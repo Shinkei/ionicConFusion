@@ -64,7 +64,7 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
     };
 });
 
-app.controller('MenuController',['$scope', 'menuFactory', 'baseURL', function($scope, menuFactory, baseURL) {
+app.controller('MenuController',['$scope', 'menuFactory', 'baseURL', '$ionicListDelegate', 'favoriteFactory', function($scope, menuFactory, baseURL, $ionicListDelegate, favoriteFactory) {
     $scope.baseURL = baseURL;
     $scope.tab = 1;
     $scope.filtText = ''; // Filter
@@ -108,6 +108,12 @@ app.controller('MenuController',['$scope', 'menuFactory', 'baseURL', function($s
     $scope.toggleDetails = function(){
         $scope.showDetails = !$scope.showDetails;
     };
+
+    $scope.addFavorite = function(index){
+        console.log('index: '+index);
+        favoriteFactory.addToFavorites(index);
+        $ionicListDelegate.closeOptionButtons();
+    }
 }]);
 
 // Contact controller
@@ -256,3 +262,43 @@ app.controller('AboutController', ['$scope', 'corporateService', 'baseURL', func
     );
 
 }]);
+
+app.controller('FavoriteController', ['$scope', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicListDelegate', function($scope, menuFactory, favoriteFactory, baseURL,$ionicListDelegate){
+    $scope.baseURL = baseURL;
+    $scope.shouldShowDelete = false;
+    $scope.favorites = favoriteFactory.getFavorites();
+
+    $scope.dishes = {};
+    menuFactory.getDishes()
+        .then(
+            function(response){
+                $scope.dishes = response.data;
+            }
+        );
+
+    $scope.toggleDelete = function(){
+        $scope.shouldShowDelete = !$scope.shouldShowDelete;
+    };
+
+    $scope.deleteFavorite = function(index){
+        favoriteFactory.deleteFromFavorites(index);
+        $scope.shouldShowDelete = false;
+    }
+
+}]);
+
+app.filter('favoriteFilter', function(){
+    return function(dishes, favorites){
+        var result = [];
+
+        for (var i = 0; i < favorites.length; i++) {
+            for (var j = 0; j < dishes.length; j++) {
+                if (dishes[j].id === favorites[i].id) {
+                result.push(dishes[j]);
+                }
+            }
+        }
+
+        return result;
+    };
+});
