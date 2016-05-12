@@ -263,27 +263,44 @@ app.controller('AboutController', ['$scope', 'corporateService', 'baseURL', func
 
 }]);
 
-app.controller('FavoriteController', ['$scope', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicListDelegate', function($scope, menuFactory, favoriteFactory, baseURL,$ionicListDelegate){
+app.controller('FavoriteController', ['$scope', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicListDelegate', '$ionicPopup', '$ionicLoading', '$timeout', function($scope, menuFactory, favoriteFactory, baseURL,$ionicListDelegate, $ionicPopup, $ionicLoading, $timeout){
     $scope.baseURL = baseURL;
     $scope.shouldShowDelete = false;
     $scope.favorites = favoriteFactory.getFavorites();
 
     $scope.dishes = {};
     menuFactory.getDishes()
-        .then(
-            function(response){
-                $scope.dishes = response.data;
-            }
-        );
+        .then(function(response){
+            $scope.dishes = response.data;
+            $timeout(function(){
+                $ionicLoading.hide();
+            }, 1000);
+        });
+
+    // loading screen
+    $ionicLoading.show({
+        template:'<ion-spinner></ion-spinner> Loading...'
+    });
 
     $scope.toggleDelete = function(){
         $scope.shouldShowDelete = !$scope.shouldShowDelete;
     };
 
     $scope.deleteFavorite = function(index){
-        favoriteFactory.deleteFromFavorites(index);
-        $scope.shouldShowDelete = false;
-    }
+        var confirmPopup = $ionicPopup.confirm({
+            title:'Confirm Delete',
+            template:'Are you sure you want to delete this item?'
+        });
+
+        confirmPopup.then(function(response){
+            if (response) {
+                favoriteFactory.deleteFromFavorites(index);
+                $scope.shouldShowDelete = false;
+            }else{
+                console.log('Item deleted')
+            }
+        });
+    };
 
 }]);
 
