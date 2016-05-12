@@ -72,7 +72,7 @@ app.controller('MenuController',['$scope', 'menuFactory', 'baseURL', '$ionicList
     $scope.showMenu = false;
     $scope.message = "Loading...";
 
-    $scope.dishes = {};
+    $scope.dishes = [];
     menuFactory.getDishesResource().query(
         function(response){
             $scope.dishes = response;
@@ -114,6 +114,7 @@ app.controller('MenuController',['$scope', 'menuFactory', 'baseURL', '$ionicList
         favoriteFactory.addToFavorites(index);
         $ionicListDelegate.closeOptionButtons();
     }
+
 }]);
 
 // Contact controller
@@ -149,7 +150,7 @@ app.controller('FeedbackController', ['$scope', 'feedbackFactory', function($sco
 }]);
 
 // Dishes Details
-app.controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL', function($scope, $stateParams, menuFactory, baseURL) {
+app.controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL', 'favoriteFactory','$ionicPopover', '$ionicModal', function($scope, $stateParams, menuFactory, baseURL, favoriteFactory, $ionicPopover, $ionicModal) {
     $scope.baseURL = baseURL;
     $scope.showDish = false;
     $scope.message = "Loading...";
@@ -167,6 +168,37 @@ app.controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory',
 
     $scope.filt = "";
 
+    $scope.addFavorite = function(){
+        favoriteFactory.addToFavorites($scope.dish.id);
+        $scope.popover.hide();
+    };
+
+    $ionicPopover.fromTemplateUrl('templates/dishOptionsPopover.html', {
+        scope: $scope
+    }).then(function(popover){
+        $scope.popover = popover
+    });
+
+    $scope.openOptions = function($event){
+        $scope.popover.show($event);
+    };
+
+// Modal to add comment
+    $ionicModal.fromTemplateUrl('templates/addComment.html', {
+        scope:$scope
+    }).then(function(modal){
+        $scope.addCommentForm = modal;
+    });
+
+    $scope.closeCommentForm = function(){
+        $scope.addCommentForm.hide();
+    };
+
+    $scope.comment = function(){
+        $scope.addCommentForm.show();
+        $scope.popover.hide();
+    };
+
 }]);
 
 // DishComments
@@ -180,6 +212,7 @@ app.controller('DishCommentController', ['$scope', 'menuFactory', function($scop
         $scope.dish.comments.push($scope.comment);
         menuFactory.getDishesResource().update({id:$scope.dish.id}, $scope.dish);
         $scope.comment = {rating:5, comment:"", author:"", date:""};
+        $scope.closeCommentForm();
         $scope.commentForm.$setPristine();
     };
 }]);

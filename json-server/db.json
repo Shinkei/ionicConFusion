@@ -88,7 +88,7 @@
       "image": "images/vadonut.png",
       "category": "appetizer",
       "label": "New",
-      "price": "1.99",
+      "price": 1.99,
       "description": "A quintessential ConFusion experience, is it a vada or is it a donut?",
       "comments": [
         {
@@ -120,6 +120,18 @@
           "comment": "It's your birthday, we're gonna party!",
           "author": "25 Cent",
           "date": "2011-12-02T17:57:28.556094Z"
+        },
+        {
+          "rating": "1",
+          "comment": "esto sabe muy feo",
+          "author": "motas",
+          "date": "2016-05-12T19:50:31.733Z"
+        },
+        {
+          "rating": "3",
+          "comment": "Estas donas no son tan ricas",
+          "author": "Diana",
+          "date": "2016-05-12T19:53:24.132Z"
         }
       ]
     },
@@ -129,7 +141,7 @@
       "image": "images/elaicheesecake.png",
       "category": "dessert",
       "label": "",
-      "price": "2.99",
+      "price": 2.99,
       "description": "A delectable, semi-sweet New York Style Cheese Cake, with Graham cracker crust and spiced with Indian cardamoms",
       "comments": [
         {
@@ -161,6 +173,12 @@
           "comment": "It's your birthday, we're gonna party!",
           "author": "25 Cent",
           "date": "2011-12-02T17:57:28.556094Z"
+        },
+        {
+          "rating": "3",
+          "comment": "Este me gusta mas",
+          "author": "Carolina",
+          "date": "2016-05-12T20:01:26.082Z"
         }
       ]
     }
