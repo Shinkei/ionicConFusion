@@ -83,3 +83,12 @@ app.factory('favoriteFactory', ['$resource', 'baseURL', function($resource, base
 
     return favFac;
 }]);
+
+// These factories are used to be implementes with the resolve implementation in app.js
+app.factory('dishesFactory', ['$resource', 'baseURL', function($resource, baseURL){
+    return $resource(baseURL+"dishes/:id", null, {'update':{method:'PUT'}});
+}]);
+
+app.factory('promotionsFactory', ['$resource','baseURL', function($resource, baseURL){
+    return $resource(baseURL+"promotions/:id", null, {'update':{method:'PUT'}});
+}]);

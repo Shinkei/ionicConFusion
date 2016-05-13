@@ -64,24 +64,13 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
     };
 });
 
-app.controller('MenuController',['$scope', 'menuFactory', 'baseURL', '$ionicListDelegate', 'favoriteFactory', function($scope, menuFactory, baseURL, $ionicListDelegate, favoriteFactory) {
+app.controller('MenuController',['$scope', 'dishes', 'baseURL', '$ionicListDelegate', 'favoriteFactory', function($scope, dishes, baseURL, $ionicListDelegate, favoriteFactory) {
     $scope.baseURL = baseURL;
     $scope.tab = 1;
     $scope.filtText = ''; // Filter
     $scope.showDetails = false;
-    $scope.showMenu = false;
-    $scope.message = "Loading...";
 
-    $scope.dishes = [];
-    menuFactory.getDishesResource().query(
-        function(response){
-            $scope.dishes = response;
-            $scope.showMenu = true;
-        },
-        function(response){
-            $scope.message = "ERROR:"+response.status+" "+response.statusText;
-        }
-    );
+    $scope.dishes = dishes;
 
     $scope.select = function(setTab){
         $scope.tab = setTab;
@@ -213,12 +202,12 @@ app.controller('DishCommentController', ['$scope', 'menuFactory', function($scop
         menuFactory.getDishesResource().update({id:$scope.dish.id}, $scope.dish);
         $scope.comment = {rating:5, comment:"", author:"", date:""};
         $scope.closeCommentForm();
-        $scope.commentForm.$setPristine();
+
     };
 }]);
 
 // Index Controller
-app.controller('IndexController', ['$scope', 'menuFactory', 'corporateService', 'baseURL', function($scope, menuFactory, corporateService, baseURL){
+app.controller('IndexController', ['$scope', 'menuFactory', 'corporateService', 'baseURL', 'promotions', function($scope, menuFactory, corporateService, baseURL, promotions){
 
     $scope.baseURL = baseURL;
     $scope.showDishes = false;
@@ -250,18 +239,7 @@ app.controller('IndexController', ['$scope', 'menuFactory', 'corporateService', 
             }
         );
 
-    $scope.promotion = {};
-    $scope.showPromotion = false;
-    $scope.messagePromotion = "Loading...";
-    menuFactory.getPromoResource().get({id:0})
-        .$promise.then(
-            function(response){
-                $scope.promotion = response;
-                $scope.showPromotion = true;
-            },
-            function(response){
-                $scope.messagePromotion = "ERROR: "+response.status+" "+response.statusText;
-            });
+    $scope.promotion = promotions;
 
     $scope.ceo = {};
     $scope.showCEO = false;
@@ -337,6 +315,7 @@ app.controller('FavoriteController', ['$scope', 'menuFactory', 'favoriteFactory'
 
 }]);
 
+// Filter of favorites, this should be in a separate file
 app.filter('favoriteFilter', function(){
     return function(dishes, favorites){
         var result = [];

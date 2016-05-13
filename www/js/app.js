@@ -6,7 +6,8 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('conFusion', ['ionic', 'conFusion.controllers', 'conFusion.services'])
 
-.run(function($ionicPlatform) {
+// DI $rootScope and $ionicLoading to manage the loading screen
+.run(function($ionicPlatform, $rootScope, $ionicLoading) {
     $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -20,6 +21,23 @@ angular.module('conFusion', ['ionic', 'conFusion.controllers', 'conFusion.servic
       StatusBar.styleDefault();
   }
 });
+    // Events management----------------------
+    $rootScope.$on('loading:show', function(){
+        $ionicLoading.show({
+            template:'<ion-spinner></ion-spinner> Loading...'
+        });
+    });
+    $rootScope.$on('loading:hide', function(){
+        $ionicLoading.hide();
+    });
+    $rootScope.$on('$stateChangeStart', function(){
+        console.log('Loading....');
+        $rootScope.$broadcast('loading:show');
+    });
+    $rootScope.$on('$stateChangeSuccess', function(){
+        console.log('done');
+        $rootScope.$broadcast('loading:hide');
+    });
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -37,7 +55,14 @@ angular.module('conFusion', ['ionic', 'conFusion.controllers', 'conFusion.servic
         views: {
             'mainContent': {
                 templateUrl: 'templates/home.html',
-                controller: 'IndexController'
+                controller: 'IndexController',
+                resolve:{
+                    // to get the id of a product, just add $stateParams as a DI and get the id
+                    // {id:parseInt($stateParams.id, 10)}
+                    promotions: ['promotionsFactory', function(promotionsFactory){
+                        return promotionsFactory.get({id:0});
+                    }]
+                }
             }
         }
     })
@@ -56,7 +81,12 @@ angular.module('conFusion', ['ionic', 'conFusion.controllers', 'conFusion.servic
         views: {
             'mainContent': {
                 templateUrl: 'templates/menu.html',
-                controller: 'MenuController'
+                controller: 'MenuController',
+                resolve:{
+                    dishes:['dishesFactory', function(dishesFactory){
+                        return dishesFactory.query();
+                    }]
+                }
             }
         }
     })
