@@ -2,7 +2,7 @@
 
 var app = angular.module('conFusion.services', ['ngResource']);
 
-app.constant("baseURL", "http://localhost:3000/");
+app.constant("baseURL", "http://192.168.70.239:3000/");
 
 app.factory('menuFactory', ['$resource', '$http', 'baseURL', function($resource, $http, baseURL) {
     var menuFac = {};
@@ -36,13 +36,8 @@ app.factory('menuFactory', ['$resource', '$http', 'baseURL', function($resource,
     return menuFac;
 }]);
 
-app.service('corporateService', ['$resource', 'baseURL', function($resource, baseURL){
-
-    var resourceLeader = $resource(baseURL+"leadership/:id", null, {'update':{method:'PUT'}});
-
-    this.getLeaderResource = function(){
-        return resourceLeader;
-    };
+app.factory('corporateFactory', ['$resource', 'baseURL', function($resource, baseURL){
+    return $resource(baseURL+"leadership/:id", null, {'update':{method:'PUT'}});
 }]);
 
 app.factory('feedbackFactory', ['$resource', 'baseURL', function($resource, baseURL){
@@ -56,17 +51,19 @@ app.factory('feedbackFactory', ['$resource', 'baseURL', function($resource, base
     return feedbackFactory;
 }]);
 
-app.factory('favoriteFactory', ['$resource', 'baseURL', function($resource, baseURL){
+app.factory('favoriteFactory', ['$resource', 'baseURL', '$localStorage', function($resource, baseURL, $localStorage){
     var favFac = {};
-    var favorites = [];
+    var favoriteO = $localStorage.getObject('favorites', '{"favorites":[]}');
+    var favorites = favoriteO.favorites;
 
     favFac.addToFavorites = function(index){
-        for (var i = 0; i < favorites.length; i++) {
+        for (var i = 0, len = favorites.length; i < len; i++) {
             if (favorites[i].id === index) {
                 return;
             }
         }
         favorites.push({id:index});
+        $localStorage.storeObject('favorites', favoriteO);
     };
 
     favFac.getFavorites = function(){
@@ -77,6 +74,7 @@ app.factory('favoriteFactory', ['$resource', 'baseURL', function($resource, base
         for (var i = 0; i < favorites.length; i++) {
             if (favorites[i].id === index) {
                 favorites.splice(i, 1);
+                $localStorage.storeObject('favorites', favoriteO);
             }
         }
     };
@@ -93,6 +91,7 @@ app.factory('promotionsFactory', ['$resource','baseURL', function($resource, bas
     return $resource(baseURL+"promotions/:id", null, {'update':{method:'PUT'}});
 }]);
 
+// Factory to get and save objects in the browser's local storage
 app.factory('$localStorage', ['$window', function($window){
     let storage = {};
 

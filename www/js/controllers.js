@@ -139,21 +139,11 @@ app.controller('FeedbackController', ['$scope', 'feedbackFactory', function($sco
 }]);
 
 // Dishes Details
-app.controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL', 'favoriteFactory','$ionicPopover', '$ionicModal', function($scope, $stateParams, menuFactory, baseURL, favoriteFactory, $ionicPopover, $ionicModal) {
+app.controller('DishDetailController', ['$scope', '$stateParams', 'dish', 'baseURL', 'favoriteFactory','$ionicPopover', '$ionicModal', function($scope, $stateParams, dish, baseURL, favoriteFactory, $ionicPopover, $ionicModal) {
     $scope.baseURL = baseURL;
     $scope.showDish = false;
     $scope.message = "Loading...";
-    $scope.dish = {};
-    menuFactory.getDish(parseInt($stateParams.id, 10))
-        .then(
-            function(response){
-                $scope.dish = response.data;
-                $scope.showDish = true;
-            },
-            function(response){
-                $scope.message = "ERROR: "+response.status+" "+response.statusText;
-            }
-        );
+    $scope.dish = dish;
 
     $scope.filt = "";
 
@@ -207,91 +197,29 @@ app.controller('DishCommentController', ['$scope', 'menuFactory', function($scop
 }]);
 
 // Index Controller
-app.controller('IndexController', ['$scope', 'menuFactory', 'corporateService', 'baseURL', 'promotions', function($scope, menuFactory, corporateService, baseURL, promotions){
+app.controller('IndexController', ['$scope', 'dish', 'ceo', 'baseURL', 'promotions', function($scope, dish, ceo, baseURL, promotions){
 
     $scope.baseURL = baseURL;
-    $scope.showDishes = false;
-    $scope.showDish = false;
-    $scope.messageDishes = "Loading...";
-    $scope.messageDish = "Loading...";
 
-    $scope.dishes = {};
-    menuFactory.getDishes()
-        .then(
-            function(response){
-                $scope.dishes = response.data;
-                $scope.showDishes = true;
-            },
-            function(response){
-                $scope.messageDishes = "ERROR:"+response.status+" "+response.statusText;
-            }
-        );
-
-    $scope.dish = {};
-    menuFactory.getDish(0)
-        .then(
-            function(response){
-                $scope.dish = response.data;
-                $scope.showDish = true;
-            },
-            function(response){
-                $scope.messageDish = "ERROR: "+response.status+" "+response.statusText;
-            }
-        );
-
+    $scope.dish = dish;
     $scope.promotion = promotions;
-
-    $scope.ceo = {};
-    $scope.showCEO = false;
-    $scope.messageCEO = "Loading...";
-    corporateService.getLeaderResource().get({id:0})
-        .$promise.then(
-            function(response){
-                $scope.ceo = response;
-                $scope.showCEO = true;
-            },
-            function(response){
-                $scope.messageCEO = "ERROR: "+response.status+" "+response.statusText;
-            }
-        );
+    $scope.ceo = ceo;
 
 }]);
 
-app.controller('AboutController', ['$scope', 'corporateService', 'baseURL', function($scope, corporateService, baseURL){
+app.controller('AboutController', ['$scope', 'leaders', 'baseURL', function($scope, leaders, baseURL){
     $scope.baseURL = baseURL;
     $scope.showLeaders = false;
     $scope.messageLeaders = 'Loading...';
-    $scope.leaders = {};
-    corporateService.getLeaderResource().query(
-        function(response){
-            $scope.leaders = response;
-            $scope.showLeaders = true;
-        },
-        function(response){
-            $scope.messageLeaders = "ERROR: "+response.status+" "+response.statusText;
-        }
-    );
-
+    $scope.leaders = leaders;
 }]);
 
-app.controller('FavoriteController', ['$scope', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicListDelegate', '$ionicPopup', '$ionicLoading', '$timeout', function($scope, menuFactory, favoriteFactory, baseURL,$ionicListDelegate, $ionicPopup, $ionicLoading, $timeout){
+app.controller('FavoriteController', ['$scope', 'dishes', 'favoriteFactory', 'baseURL', '$ionicListDelegate', '$ionicPopup', '$timeout', function($scope, dishes, favoriteFactory, baseURL,$ionicListDelegate, $ionicPopup, $timeout){
     $scope.baseURL = baseURL;
     $scope.shouldShowDelete = false;
     $scope.favorites = favoriteFactory.getFavorites();
 
-    $scope.dishes = {};
-    menuFactory.getDishes()
-        .then(function(response){
-            $scope.dishes = response.data;
-            $timeout(function(){
-                $ionicLoading.hide();
-            }, 1000);
-        });
-
-    // loading screen
-    $ionicLoading.show({
-        template:'<ion-spinner></ion-spinner> Loading...'
-    });
+    $scope.dishes = dishes;
 
     $scope.toggleDelete = function(){
         $scope.shouldShowDelete = !$scope.shouldShowDelete;

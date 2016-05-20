@@ -61,6 +61,12 @@ angular.module('conFusion', ['ionic', 'conFusion.controllers', 'conFusion.servic
                     // {id:parseInt($stateParams.id, 10)}
                     promotions: ['promotionsFactory', function(promotionsFactory){
                         return promotionsFactory.get({id:0});
+                    }],
+                    ceo: ['corporateFactory', function(corporateFactory){
+                        return corporateFactory.get({id:0});
+                    }],
+                    dish: ['dishesFactory', function(dishesFactory){
+                        return dishesFactory.get({id:0});
                     }]
                 }
             }
@@ -72,7 +78,12 @@ angular.module('conFusion', ['ionic', 'conFusion.controllers', 'conFusion.servic
         views: {
             'mainContent': {
                 templateUrl: 'templates/aboutus.html',
-                controller: 'AboutController'
+                controller: 'AboutController',
+                resolve:{
+                    leaders: ['corporateFactory', function(corporateFactory){
+                        return corporateFactory.query();
+                    }]
+                }
             }
         }
     })
@@ -95,7 +106,12 @@ angular.module('conFusion', ['ionic', 'conFusion.controllers', 'conFusion.servic
         views: {
             'mainContent': {
                 templateUrl: 'templates/favorites.html',
-                controller: 'FavoriteController'
+                controller: 'FavoriteController',
+                resolve:{
+                    dishes:['dishesFactory', function(dishesFactory){
+                        return dishesFactory.query();
+                    }]
+                }
             }
         }
     })
@@ -113,7 +129,12 @@ angular.module('conFusion', ['ionic', 'conFusion.controllers', 'conFusion.servic
         views: {
             'mainContent': {
                 templateUrl: 'templates/dishdetail.html',
-                controller: 'DishDetailController'
+                controller: 'DishDetailController',
+                resolve:{
+                    dish:['$stateParams', 'dishesFactory', function($stateParams, dishesFactory){
+                        return dishesFactory.get({id:parseInt($stateParams.id,10)});
+                    }]
+                }
             }
         }
     });
