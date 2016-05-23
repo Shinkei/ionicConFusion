@@ -64,7 +64,7 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $localStorage)
     };
 });
 
-app.controller('MenuController',['$scope', 'dishes', 'baseURL', '$ionicListDelegate', 'favoriteFactory', function($scope, dishes, baseURL, $ionicListDelegate, favoriteFactory) {
+app.controller('MenuController',['$scope', 'dishes', 'baseURL', '$ionicListDelegate', 'favoriteFactory', '$ionicPlatform', '$cordovaLocalNotification', '$cordovaToast', function($scope, dishes, baseURL, $ionicListDelegate, favoriteFactory, $ionicPlatform, $cordovaLocalNotification, $cordovaToast) {
     $scope.baseURL = baseURL;
     $scope.tab = 1;
     $scope.filtText = ''; // Filter
@@ -102,7 +102,26 @@ app.controller('MenuController',['$scope', 'dishes', 'baseURL', '$ionicListDeleg
         console.log('index: '+index);
         favoriteFactory.addToFavorites(index);
         $ionicListDelegate.closeOptionButtons();
-    }
+
+        $ionicPlatform.ready(function(){
+            $cordovaLocalNotification.schedule({
+                id:1,
+                title:'Added Favorite',
+                text:$scope.dishes[index].name
+            }).then(function(){
+                console.log('added favorite', $scope.dishes[index].name);
+            },function(){
+                console.log('failed to add favorite');
+            });
+
+            $cordovaToast.show('Added Favorite '+$scope.dishes[index].name)
+                .then(function(){
+                    console.log('show toast');
+                },function(){
+                    console.log('error in toast');
+            });
+        });
+    };
 
 }]);
 
